@@ -5,6 +5,7 @@ import target_class
 import scipy
 from scipy.integrate import odeint
 import math
+import datetime
 
 """
 command line args:
@@ -53,7 +54,7 @@ def tumble(total_t, dt, x, y, z, wx, wy, wz, Lx, Ly, Lz):
 	state_data[0][:] = target.state
 	torque_data = np.zeros((total_steps, 3)) # future could have a pre-set torque dataset
 	torque_data[0][:] = target.torque 
-	t_data = np.zeros(total_steps)
+	t_data = np.zeros((total_steps, 1))
 
 	# overall loop for tumbling
 	for i in range(0, total_steps - 1):
@@ -73,17 +74,24 @@ def tumble(total_t, dt, x, y, z, wx, wy, wz, Lx, Ly, Lz):
 
 		# update tumbling data
 		state_data[i + 1][:] = target.state
-		t_data[i + 1]= t
+		t_data[i + 1][:] = t
 		target.torque = torque_data[i + 1][:]
 
 	# save tumbling data
 	# set print output to normal notation, 6 decimal places
+	"""
 	np.set_printoptions(suppress=True, formatter={'float_kind':'{:0.6f}'.format})
 
 	print("State data: ")
 	print(state_data)
 	print()
 	print()
+	"""
+
+	run_data = np.concatenate((t_data, state_data, torque_data), axis=1)
+	filename = '/Users/charlesoestreich/tumble_py/data/run_data_' + str(datetime.datetime.now()) + '.csv'
+	np.savetxt(filename, run_data, delimiter=',')
+
 
 
 
